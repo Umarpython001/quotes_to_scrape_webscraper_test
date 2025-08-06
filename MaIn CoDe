@@ -1,0 +1,21 @@
+import requests
+from bs4 import BeautifulSoup
+from pprint import PrettyPrinter
+
+machine = PrettyPrinter()
+
+url = "https://quotes.toscrape.com/tag/life"
+
+response = requests.get(url)
+
+if response.status_code ==200:
+    soup = BeautifulSoup(response.text, "html.parser")
+    quotes_group = soup.find_all("div", class_ = "col-md-8")
+    for quote in quotes_group:
+        quote_messages = quote.find_all("span", class_ = "text")
+        people_that_said_the_quotes = quote.find_all("small", class_ = "author")
+        dictionary_pairs = {message: author for message, author in zip(quote_messages, people_that_said_the_quotes)}
+        
+        for message, author in dictionary_pairs.items():
+            print(f"{author.text} said {message.text}")
+            print("")
